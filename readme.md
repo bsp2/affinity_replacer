@@ -11,7 +11,7 @@ The basic idea is that you start a realtime audio application ("DAW"), assign it
 ## Usage
 
 ~~~
-affinity_replacer.exe [/v] [/vv] [/d] [/f <force_affinity_hex_mask>] [/m <match_affinity_hex_mask>] [/p <PID>] [/ne] [/l] [/slow]\n", _exeName);
+affinity_replacer.exe [/v] [/vv] [/d] [/f <force_affinity_hex_mask>] [/m <match_affinity_hex_mask>] [/p <PID>] [/ne] [/l] [/slow]
     /v    : verbose output
     /vv   : very verbose output (DEBUG)
     /d    : list DLL modules (DEBUG)
