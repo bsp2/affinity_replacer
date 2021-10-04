@@ -1,7 +1,7 @@
 
 # affinity_replacer
 
-This is an experimental* multi-processor utility for x64 Windows (10) which relegates background tasks and services to a certain CPU cores, by updating their process + thread affinity masks.
+This is an experimental* multi-processor utility for x64 Windows (10) which relegates background tasks and services to certain CPU cores, by updating their process + thread affinity masks.
 
 The basic idea is that you start a realtime audio application ("DAW"), assign it an affinity mask (e.g. cores 5..18), then force the inverted affinity mask on all other processes by running this utility (preferably in the background / in loop mode since the system may spawn new processes and threads).
 
@@ -70,12 +70,13 @@ The audio process was configured to run on cores 5..14, each track was configure
 The peak per-track/core CPU load was ~55%, and the total processing time (which includes waiting for worker threads) was ~64% (relative to the ~1.45ms timeslot available for processing 64 sample frame buffers at a rate of 44.1kHz).
 
 The entire system is properly optimized for realtime audio (to my best knowledge), which includes
-    - using the "high performance" power profile
-    - turning off unneeded background tasks and services (including the "Microsoft Compatibility Appraiser" tasks, which caused a lot of low-latency issues)
-    - disabling the system page file (do _not_ do this if you have less than 32GB RAM !)
-    - using up to date drivers. According to the [LatencyMon](https://www.resplendence.com/latencymon) the "Highest reported DPC routine execution time" is <180us, even with an NVidia 1080 TI graphics card (these used to be notorious for causing realtime audio issues, not any more, as it seems).
-    - in `systempropertiesadvanced.exe`=>Performance Settings=>Advanced choose "Adjust for best performance of: [*] Background services"
-    - running the audio process with realtime priority (configured via task manager) (Warning: this can lock up the entire system in case the process gets stuck. fortunately this hasn't happened, yet. Note aside: "Eureka" has a watch dog mechanism to detect this scenario and will stop all audio processing when too many underruns occurs or a worker thread takes too long)
+
+- using the "high performance" power profile
+- turning off unneeded background tasks and services (including the "Microsoft Compatibility Appraiser" tasks, which caused a lot of low-latency issues)
+- disabling the system page file (do _not_ do this if you have less than 32GB RAM !)
+- using up to date drivers. According to the [LatencyMon](https://www.resplendence.com/latencymon) the "Highest reported DPC routine execution time" is <180us, even with an NVidia 1080 TI graphics card (these used to be notorious for causing realtime audio issues, not any more, as it seems).
+- in `systempropertiesadvanced.exe`=>Performance Settings=>Advanced choose "Adjust for best performance of: [*] Background services"
+- running the audio process with realtime priority (configured via task manager) (Warning: this can lock up the entire system in case the process gets stuck. fortunately this hasn't happened, yet. Note aside: "Eureka" has a watch dog mechanism to detect this scenario and will stop all audio processing when too many underruns occurs or a worker thread takes too long)
 
 ### Scenario 1
 In this scenario the computer was used for web browsing, email, and video while the (realtime) music was running in the background.
@@ -93,11 +94,11 @@ It does not completely eliminate them, though.
 
 
 ## Issues
-One issue is that in `/slow` mode it takes ~45 seconds to iterate all threads. This means that if a new process/thread is spawned, it can potentially clash with the audio threads scheduling wise for this period of time.
+One issue is that in `/slow` mode it takes ~45 seconds to iterate all threads. This means that if a new process / thread is spawned, it can potentially clash with the audio threads scheduling wise for this period of time.
 
 Running the utility without `/slow` causes a relatively high CPU load on the core the utility runs on (cores 1..4 in my setup). The Windows system calls for enumerating / iterating / opening / updating the threads seem to be quite expensive.
 
-Ideally, there would be a Window configuration option that allows you to replace the default/initial process/thread affinity with a user configurable mask.
+Ideally, there would be a Window configuration option that allows you to replace the default/initial process / thread affinity with a user configurable mask.
 This could be used to ensure that any new processes would never be scheduled on the same cores as the realtime audio threads.
 
 ## Legal
